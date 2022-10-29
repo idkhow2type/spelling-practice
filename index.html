@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div>
+            <h2>Voices:</h2>
+            <form name="voice"></form>
+        </div>
+        <div>
+            <h1>Spelling trainer!</h1>
+            <div class="hide stats">
+                <p class="answer">Answer</p>
+                <h2 class="correct">Correct</h2>
+                <p class="time">Time</p>
+                <p class="message">Message</p>
+            </div>
+            <div class="title">
+                <p>
+                    This is a simple web application that will help you learn to
+                    spell words.<br />
+                    A word will be spoken and you will have to spell it out.<br />
+                    After you have spelled it out, you will be given the correct
+                    spelling.<br />
+                </p>
+                <button class="btn-title">Start!</button>
+            </div>
+            <form name="word-input">
+                <input type="text" name="word" spellcheck="false"/>
+                <button name="replay" type="button">
+                    <img
+                        src="assets/speaker.png"
+                    /> <!-- TODO: change to svg -->
+                </button>
+            </form>
+        </div>
+        <div>
+            <h2>Stats:</h2>
+            <p class="word-count">Total words: 0</p>
+            <p class="percentage">Correct percentage: ???</p>
+            <div class="all-stats">
+                <h3>Answer</h3>
+                <h3>Correct Answer</h3>
+                <h3>Is correct</h3>
+                <h3>Time</h3>
+            </div>
+        </div>
+        <style>
+            body {
+                margin: 0;
+                padding: 0 2em;
+                background: wheat;
+                display: grid;
+                grid-template-columns: 1fr 2fr 1fr;
+                flex-direction: column;
+                align-items: center;
+                height: 100vh;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode',
+                    'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                overflow: hidden;
+            }
+            div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: opacity 0.2s;
+            }
+            div:last-of-type {
+                height: 100%;
+            }
+            body > div:nth-child(3) h2 {
+                margin-bottom: 0;
+            }
+            .all-stats {
+                display: grid;
+                grid-template-columns: 9.1em 9.1em 6em 4em;
+                height: min-content !important;
+                max-height: 75vh;
+                align-items: flex-start;
+                justify-content: center;
+                overflow-y: auto;
+                overflow-x: hidden;
+                border: 0.1em solid black;
+            }
+            .all-stats * {
+                border-bottom: 0.1em solid black;
+                border-right: 0.1em solid black;
+                text-align: center;
+                padding: 0.2em !important;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+                height: max-content;
+            }
+            .all-stats > :nth-child(4n) {
+                border-right: none;
+            }
+            .all-stats > :nth-last-child(-n + 4) {
+                border-bottom: none;
+            }
+            form[name='voice'] {
+                display: grid;
+                grid-template-columns: min-content 1fr;
+                grid-gap: 0.5em 1em;
+                justify-content: center;
+                align-items: center;
+            }
+            form[name='word-input'] {
+                opacity: 0;
+                display: flex;
+                align-items: center;
+                gap: 1em;
+            }
+            h1 {
+                font-size: 3em;
+            }
+            img {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                mix-blend-mode: multiply;
+            }
+            input[name='word'] {
+                background: transparent;
+                text-align: center;
+                font-size: 1.5em;
+                border-radius: 999999px; /* pill shape */
+            }
+            button {
+                background: transparent;
+                font-size: 1.2em;
+            }
+            .title > button {
+                padding: 0 1em;
+            }
+            button[name='replay'] {
+                width: 2em;
+                height: 2em;
+                padding: 0.2em;
+            }
+            input[type='radio'] {
+                width: 1.5em;
+                height: 1.5em;
+            }
+            div:first-of-type * {
+                margin: 0;
+                padding: 0;
+            }
+            input[type='text'] {
+                border: 0.2em solid black;
+            }
+
+            button:hover {
+                cursor: pointer;
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+            .hide,
+            .hide * {
+                opacity: 0;
+            }
+            .hide:hover,
+            .hide *:hover {
+                cursor: default;
+            }
+            ::-webkit-scrollbar {
+                position: absolute;
+                width: 0.5em;
+                background-color: rgba(0, 0, 0, 0.2);
+            }
+            ::-webkit-scrollbar-thumb {
+                background-color: rgba(0, 0, 0, 0.4);
+            }
+        </style>
+        <script>
+            window.speechSynthesis.onvoiceschanged = async () => {
+                function shuffle(array) {
+                    let currentIndex = array.length,
+                        randomIndex;
+
+                    // While there remain elements to shuffle.
+                    while (currentIndex != 0) {
+                        // Pick a remaining element.
+                        randomIndex = Math.floor(Math.random() * currentIndex);
+                        currentIndex--;
+
+                        // And swap it with the current element.
+                        [array[currentIndex], array[randomIndex]] = [
+                            array[randomIndex],
+                            array[currentIndex],
+                        ];
+                    }
+
+                    return array;
+                }
+
+                const words = (await (await fetch('words.txt')).text()).split(
+                    '\r\n'
+                );
+                let wordIndex = 0;
+                let shuffleWords = shuffle(words);
+                const guesses = [];
+
+                window.speechSynthesis
+                    .getVoices()
+                    .filter((voice) => voice.lang.startsWith('en'))
+                    .forEach((voice, i) => {
+                        const input = document.createElement('input');
+                        input.type = 'radio';
+                        input.name = 'voice';
+                        input.value = voice.name;
+                        input.id = voice.name;
+                        input.checked =
+                            window.localStorage.getItem('voice') ===
+                                voice.name || i === 0; // epic logic
+                        input.addEventListener('change', () => {
+                            window.localStorage.setItem('voice', voice.name);
+                        });
+                        const label = document.createElement('label');
+                        label.htmlFor = voice.name;
+                        label.innerText = voice.name;
+                        document.querySelector('form').append(input, label);
+                    });
+
+                document
+                    .querySelector('button')
+                    .addEventListener('click', title);
+                function title() {
+                    document.querySelector('.title').classList.add('hide');
+                    const form = document.querySelector(
+                        'form[name="word-input"]'
+                    );
+                    form.style.opacity = 1;
+                    document
+                        .querySelector('button')
+                        .removeEventListener('click', title);
+                    document
+                        .querySelector('.title')
+                        .addEventListener('transitionend', newWord);
+                }
+                function newWord(e = null) {
+                    if (e) e.preventDefault();
+                    const form = document.querySelector(
+                        'form[name=word-input]'
+                    );
+                    const input = document.querySelector('input[name=word]');
+                    const answer = document.querySelector('.answer');
+                    const correct = document.querySelector('.correct');
+                    const time = document.querySelector('.time');
+                    const message = document.querySelector('.message');
+                    const replay = document.querySelector(
+                        'button[name=replay]'
+                    );
+                    const allStats = document.querySelector('.all-stats');
+                    const percentage = document.querySelector('.percentage');
+                    const wordCount = document.querySelector('.word-count');
+
+                    const word = shuffleWords[wordIndex].toLowerCase();
+                    wordIndex++;
+                    if (wordIndex === words.length) {
+                        wordIndex = 0;
+                        shuffleWords = shuffle(words);
+                    }
+                    const startTime = Date.now();
+
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.7;
+                    utterance.volume = 2;
+                    utterance.voice = window.speechSynthesis
+                        .getVoices()
+                        .filter((voice) => voice.lang.startsWith('en'))
+                        .find(
+                            (voice) =>
+                                voice.name ===
+                                    window.localStorage.getItem('voice') ??
+                                [
+                                    ...document.querySelectorAll(
+                                        'input[name=voice]'
+                                    ),
+                                ].find((input) => input.checked).value
+                        ); // this is disgusting and im not fixing it 😎
+
+                    input.focus();
+                    document.querySelector('.stats').classList.add('hide');
+                    document.body.style.background = 'wheat';
+
+                    form.removeEventListener('submit', newWord);
+                    window.speechSynthesis.speak(utterance);
+
+                    replay.addEventListener('click', playWord);
+                    function playWord() {
+                        window.speechSynthesis.speak(utterance);
+                        input.focus();
+                    }
+                    form.addEventListener('submit', onAnswer);
+                    function onAnswer(e) {
+                        e.preventDefault();
+
+                        document
+                            .querySelector('.stats')
+                            .classList.remove('hide');
+
+                        const guess = input.value.toLowerCase() || ' ';
+
+                        answer.innerHTML = guess;
+                        correct.innerHTML = word;
+                        time.innerHTML = `Time: ${
+                            (Date.now() - startTime) / 1000
+                        }s`;
+                        message.innerHTML = '(Press enter to continue)';
+
+                        guesses.push({
+                            guess,
+                            answer: word,
+                            time: Date.now() - startTime,
+                            isCorrect: guess === word,
+                        });
+                        allStats.innerHTML =
+                            '<h3>Answer</h3><h3>Correct Answer</h3><h3>Is correct</h3><h3>Time</h3>';
+                        guesses.forEach((guess) => {
+                            allStats.innerHTML += `<p>${guess.guess}</p><p>${
+                                guess.answer
+                            }</p><p>${guess.isCorrect}</p><p>${
+                                guess.time / 1000
+                            }s</p>`;
+                        });
+                        allStats.scrollTop = allStats.scrollHeight;
+                        percentage.innerHTML = `Correct percentage: ${(
+                            (guesses.filter((guess) => guess.isCorrect).length /
+                                guesses.length) *
+                            100
+                        ).toFixed(2)}%`;
+                        wordCount.innerHTML = `Total words: ${guesses.length}`;
+
+                        document.body.style.backgroundColor =
+                            guess === word ? 'lightgreen' : 'lightcoral';
+                        input.value = '';
+                        input.focus();
+
+                        form.removeEventListener('submit', onAnswer);
+                        form.addEventListener('submit', newWord);
+                        replay.removeEventListener('click', playWord);
+                    }
+                }
+            };
+        </script>
+    </body>
+</html>
