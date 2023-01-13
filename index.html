@@ -30,19 +30,18 @@
                 <button class="btn-title">Start!</button>
             </div>
             <form name="word-input">
-                <input type="text" name="word" spellcheck="false"/>
+                <input type="text" name="word" spellcheck="false" />
                 <button name="replay" type="button">
-                    <img
-                        src="assets/speaker.png"
-                    /> <!-- TODO: change to svg -->
+                    <img src="assets/speaker.png" />
+                    <!-- TODO: change to svg -->
                 </button>
             </form>
         </div>
-        <div>
+        <div class="stats">
             <h2>Stats:</h2>
             <p class="word-count">Total words: 0</p>
             <p class="percentage">Correct percentage: ???</p>
-            <div class="all-stats">
+            <div class="answer-stats">
                 <h3>Answer</h3>
                 <h3>Correct Answer</h3>
                 <h3>Is correct</h3>
@@ -56,7 +55,6 @@
                 background: wheat;
                 display: grid;
                 grid-template-columns: 1fr 2fr 1fr;
-                flex-direction: column;
                 align-items: center;
                 height: 100vh;
                 font-family: 'Trebuchet MS', 'Lucida Sans Unicode',
@@ -69,36 +67,36 @@
                 align-items: center;
                 transition: opacity 0.2s;
             }
-            div:last-of-type {
+            .stats {
                 height: 100%;
             }
             body > div:nth-child(3) h2 {
                 margin-bottom: 0;
             }
-            .all-stats {
+            .answer-stats {
                 display: grid;
                 grid-template-columns: 9.1em 9.1em 6em 4em;
                 height: min-content !important;
                 max-height: 75vh;
                 align-items: flex-start;
-                justify-content: center;
                 overflow-y: auto;
                 overflow-x: hidden;
                 border: 0.1em solid black;
             }
-            .all-stats * {
+            .answer-stats * {
                 border-bottom: 0.1em solid black;
                 border-right: 0.1em solid black;
                 text-align: center;
                 padding: 0.2em !important;
                 overflow-x: hidden;
                 text-overflow: ellipsis;
-                height: max-content;
+                height: 1em;
+                overflow-y: hidden;
             }
-            .all-stats > :nth-child(4n) {
+            .answer-stats > :nth-child(4n) {
                 border-right: none;
             }
-            .all-stats > :nth-last-child(-n + 4) {
+            .answer-stats > :nth-last-child(-n + 4) {
                 border-bottom: none;
             }
             form[name='voice'] {
@@ -196,7 +194,7 @@
 
                     return array;
                 }
-
+                
                 const words = (await (await fetch('words.txt')).text()).split(
                     '\r\n'
                 );
@@ -254,7 +252,7 @@
                     const replay = document.querySelector(
                         'button[name=replay]'
                     );
-                    const allStats = document.querySelector('.all-stats');
+                    const allStats = document.querySelector('.answer-stats');
                     const percentage = document.querySelector('.percentage');
                     const wordCount = document.querySelector('.word-count');
 
