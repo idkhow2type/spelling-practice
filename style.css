@@ -10,6 +10,12 @@ body {
         'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow: hidden;
 }
+.wrong {
+    background-color: lightcoral;
+}
+.correct {
+    background-color: lightgreen;
+}
 div {
     display: flex;
     flex-direction: column;
@@ -19,10 +25,20 @@ div {
 .stats {
     height: 100%;
 }
+.stats *{
+    margin: 0.1em;
+}
+
+.answer-input{
+    height: 1em;
+}
 body > div:nth-child(3) h2 {
     margin-bottom: 0;
 }
-.all-stats {
+.total-stats{
+    height: 100%;
+}
+.stat-items {
     display: grid;
     grid-template-columns: 9.1em 9.1em 6em 4em;
     height: min-content !important;
@@ -32,20 +48,21 @@ body > div:nth-child(3) h2 {
     overflow-x: hidden;
     border: 0.1em solid black;
 }
-.all-stats * {
+.stat-items * {
     border-bottom: 0.1em solid black;
     border-right: 0.1em solid black;
     text-align: center;
-    padding: 0.2em !important;
+    padding: 0.2em;
+    margin: 0;
     overflow-x: hidden;
     text-overflow: ellipsis;
     height: 1em;
     overflow-y: hidden;
 }
-.all-stats > :nth-child(4n) {
+.stat-items > :nth-child(4n) {
     border-right: none;
 }
-.all-stats > :nth-last-child(-n + 4) {
+.stat-items > :nth-last-child(-n + 4) {
     border-bottom: none;
 }
 form[name='voice'] {
@@ -55,8 +72,7 @@ form[name='voice'] {
     justify-content: center;
     align-items: center;
 }
-form[name='word-input'] {
-    opacity: 0;
+form[name='word'] {
     display: flex;
     align-items: center;
     gap: 1em;
@@ -71,11 +87,12 @@ img {
     height: 100%;
     mix-blend-mode: multiply;
 }
-input[name='word'] {
+input[name='word-input'] {
     background: transparent;
     text-align: center;
     font-size: 1.5em;
     border-radius: 999999px; /* pill shape */
+    border: 0.2em solid black;
 }
 button {
     background: transparent;
@@ -93,14 +110,6 @@ input[type='radio'] {
     width: 1.5em;
     height: 1.5em;
 }
-div:first-of-type * {
-    margin: 0;
-    padding: 0;
-}
-input[type='text'] {
-    border: 0.2em solid black;
-}
-
 button:hover {
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.1);
