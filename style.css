@@ -16,27 +16,83 @@ body {
 .correct {
     background-color: lightgreen;
 }
-div {
+
+h1 {
+    font-size: 3em;
+}
+button, input, textarea {
+    background: transparent;
+    border: 0.1rem solid black;
+}
+button{
+    font-size: 1.2em;
+}
+textarea {
+    resize: none;
+}
+*{
+    transition: all 0.2s, border 0ms;
+}
+
+.title {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: opacity 0.2s;
+}
+.title > button {
+    padding: 0 1em;
+}
+
+main, aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     height: 100%;
 }
 .stats *{
     margin: 0.1em;
 }
-
+form[name='word'] {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
 .answer-input{
     height: 1em;
 }
-body > div:nth-child(3) h2 {
+img {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: multiply;
+}
+input[name='word-input'] {
+    background: transparent;
+    text-align: center;
+    font-size: 1.5em;
+    border-radius: 999999px; /* pill shape */
+    border: 0.2em solid black;
+}
+button[name='replay'] {
+    width: 2em;
+    height: 2em;
+    padding: 0.2em;
+}
+
+.total-stats h2 {
     margin-bottom: 0;
 }
 .total-stats{
     height: 100%;
+}
+.total-stats > p{
+    margin: 0.5em;
 }
 .stat-items {
     display: grid;
@@ -58,12 +114,22 @@ body > div:nth-child(3) h2 {
     text-overflow: ellipsis;
     height: 1em;
     overflow-y: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .stat-items > :nth-child(4n) {
     border-right: none;
 }
 .stat-items > :nth-last-child(-n + 4) {
     border-bottom: none;
+}
+
+.settings div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 form[name='voice'] {
     display: grid;
@@ -72,44 +138,34 @@ form[name='voice'] {
     justify-content: center;
     align-items: center;
 }
-form[name='word'] {
-    display: flex;
-    align-items: center;
-    gap: 1em;
-}
-h1 {
-    font-size: 3em;
-}
-img {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    mix-blend-mode: multiply;
-}
-input[name='word-input'] {
-    background: transparent;
-    text-align: center;
-    font-size: 1.5em;
-    border-radius: 999999px; /* pill shape */
-    border: 0.2em solid black;
-}
-button {
-    background: transparent;
-    font-size: 1.2em;
-}
-.title > button {
-    padding: 0 1em;
-}
-button[name='replay'] {
-    width: 2em;
-    height: 2em;
-    padding: 0.2em;
-}
 input[type='radio'] {
     width: 1.5em;
     height: 1.5em;
 }
+form[name='list'] *{
+    width: 100%;
+    margin: 0.5em 0;
+}
+label[for='list-file'] {
+    display: flex;
+    flex-direction: column;
+}
+label[for='list-file'] input[type='file']{
+    border: none;
+    width: fit-content;
+    align-self: center;
+}
+form[name='list'] button{
+    font-size: 1em;
+    width: fit-content;
+    display: block;
+    align-self: center;
+    justify-self: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 button:hover {
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.1);
@@ -122,6 +178,7 @@ button:hover {
 .hide *:hover {
     cursor: default;
 }
+
 ::-webkit-scrollbar {
     position: absolute;
     width: 0.5em;

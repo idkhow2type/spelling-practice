@@ -9,12 +9,33 @@
         <script src="script.js" defer type="module"></script>
     </head>
     <body>
-        <div>
-            <h2>Voices:</h2>
-            <form name="voice"></form>
-        </div>
-        <div>
-            <h1>Spelling trainer!</h1>
+        <aside class="settings">
+            <div>
+                <h2>Voices</h2>
+                <form name="voice"></form>
+            </div>
+            <div>
+                <h2>Word list</h2>
+                <form name="list">
+                    <label for="list-url">
+                        Paste URL to word list (txt)
+                        <input type="url" name="list-url" id="list-url">
+                    </label>
+                    <label for="list-text">
+                        or paste word list
+                        <textarea name="list-text" id="list-text" cols="30" rows="10"></textarea>
+                    </label>
+                    <label for="list-file">
+                        or upload file (txt)
+                        <input type="file" name="list-file" id="list-file" accept=".txt">
+                    </label>
+                    or
+                    <button type="button" name="list-default">Load default word list</button>
+                </form>
+            </div>
+        </aside>
+        <main>
+            <h1>Spelling trainer</h1>
             <div class="hide stats">
                 <p class="answer-input">Answer</p>
                 <h2 class="correct-answer">Correct</h2>
@@ -29,7 +50,7 @@
                     After you have spelled it out, you will be given the correct
                     spelling.<br />
                 </p>
-                <button>Start!</button>
+                <button>Start</button>
             </div>
             <form class="hide" name="word">
                 <input type="text" name="word-input" spellcheck="false" />
@@ -38,9 +59,9 @@
                     <!-- TODO: change to svg -->
                 </button>
             </form>
-        </div>
-        <div class="total-stats">
-            <h2>Stats:</h2>
+        </main>
+        <aside class="total-stats">
+            <h2>Stats</h2>
             <p class="word-count">Total words: 0</p>
             <p class="percentage">Correct percentage: 0%</p>
             <div class="stat-items">
@@ -49,6 +70,6 @@
                 <h3>Correct</h3>
                 <h3>Time</h3>
             </div>
-        </div>
+        </aside>
     </body>
 </html>

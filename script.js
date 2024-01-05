@@ -3,6 +3,11 @@ const title = document.querySelector('.title');
 
 const voicesSelect = document.querySelector('form[name="voice"]');
 
+const listUrl = document.querySelector('input[name="list-url"]');
+const listText = document.querySelector('textarea[name="list-text"]');
+const listFile = document.querySelector('input[name="list-file"]');
+const listDefault = document.querySelector('button[name="list-default"]');
+
 const wordInputForm = document.querySelector('form[name="word"]');
 const wordInput = document.querySelector('input[name="word-input"]');
 const replayBtn = document.querySelector('button[name="replay"]');
@@ -10,9 +15,7 @@ const replayBtn = document.querySelector('button[name="replay"]');
 const stats = document.querySelector('.stats');
 const totalStats = document.querySelector('.total-stats');
 
-let words = (await (await fetch('words.txt')).text())
-    .split('\n')
-    .map((word) => word.trim());
+let words;
 let currWord = 0;
 let totalWords = 0;
 let totalCorrect = 0;
@@ -24,6 +27,68 @@ function shuffle(array) {
     }
     return array;
 }
+
+function reset() {
+    title.classList.remove('hide');
+    wordInputForm.classList.add('hide');
+    stats.classList.add('hide');
+    document.body.classList.remove('wrong', 'correct');
+}
+
+function loadWordList(string) {
+    listText.value = string;
+    words = string
+        .split('\n')
+        .filter((word) => word)
+        .map((word) => word.trim());
+    localStorage.setItem('words', string);
+    reset();
+}
+
+loadWordList(
+    localStorage.getItem('words') ||
+        (await (await fetch('default-words.txt')).text())
+);
+
+listUrl.onchange = async () => {
+    try {
+        const res = await fetch(listUrl.value, {
+            headers: {
+                'Content-type': 'text/plain',
+            },
+        });
+        if (!res.headers.get('content-type')?.includes('text'))
+            alert('Warning: This file may not be a text file');
+        loadWordList(await res.text());
+    } catch (error) {
+        alert('Connection error');
+    }
+};
+
+listText.onchange = () => {
+    loadWordList(listText.value);
+};
+
+listFile.onchange = (e) => {
+    e.preventDefault();
+    // check if file is .txt
+    // if it is not, alert user and return
+    // else read file, write to listText.value, words and localStorage
+    const file = listFile.files[0];
+    if (!file.name.endsWith('.txt')) {
+        alert('File must be a .txt file');
+        return;
+    }
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = () => {
+        loadWordList(reader.result);
+    };
+};
+
+listDefault.onclick = async () => {
+    loadWordList(await (await fetch('default-words.txt')).text());
+};
 
 speechSynthesis.onvoiceschanged = () => {
     function getUtterence(string) {
@@ -74,7 +139,7 @@ speechSynthesis.onvoiceschanged = () => {
         document.body.classList.remove('wrong', 'correct');
 
         if (currWord === 0) words = shuffle(words);
-        console.log(words,currWord)
+        console.log(words, currWord);
 
         wordInput.value = '';
         wordInput.focus();
