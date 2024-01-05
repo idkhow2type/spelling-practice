@@ -139,7 +139,6 @@ speechSynthesis.onvoiceschanged = () => {
         document.body.classList.remove('wrong', 'correct');
 
         if (currWord === 0) words = shuffle(words);
-        console.log(words, currWord);
 
         wordInput.value = '';
         wordInput.focus();
